@@ -65,6 +65,8 @@
   },
   "scripts": {
     "start": "node scripts/start.js",
+    "dev":"node scripts/start.js",
+    "dev:mock":"set REACT_APP_MOCK=true&&node scripts/start.js",
     "build": "node scripts/build.js",
     "test": "node scripts/test.js"
   },
