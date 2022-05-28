@@ -1,7 +1,7 @@
-interface IModelInfo{
-    name: string,
-    imgPath: string,
-    desc: string
+interface IModelInfo {
+  name: string;
+  imgPath: string;
+  desc: string;
 }
 
-interface IModelInfoList extends Array<IModelInfo>{}
+interface IModelInfoList extends Array<IModelInfo> {}

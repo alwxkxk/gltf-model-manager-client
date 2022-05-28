@@ -37,6 +37,18 @@
   }
 }
 
+/* 全局通用样式 */
 .mt-10{
   margin-top:10px;
+}
+
+
+.flex-center{
+  display: flex;
+  justify-content: center;
+}
+
+/* ant 默认样式修改 */
+.ant-form-horizontal .ant-form-item-label{
+  width: 120px
 }
