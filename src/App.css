@@ -48,7 +48,15 @@
   justify-content: center;
 }
 
+.hide{
+  display: none !important;
+}
+
 /* ant 默认样式修改 */
 .ant-form-horizontal .ant-form-item-label{
   width: 120px
+}
+
+.ant-table-cell .ant-empty-normal{
+  margin:0;
 }

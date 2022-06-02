@@ -4,6 +4,9 @@
   "private": true,
   "dependencies": {
     "@babel/core": "^7.16.0",
+    "@gltf-transform/core": "^2.1.5",
+    "@gltf-transform/extensions": "^2.1.5",
+    "@gltf-transform/functions": "^2.1.5",
     "@pmmmwh/react-refresh-webpack-plugin": "^0.5.3",
     "@svgr/webpack": "^5.5.0",
     "@testing-library/jest-dom": "^5.16.4",
@@ -78,12 +81,19 @@
     ],
     "overrides": [
       {
-        "files": [ "src/**/*" ]
+        "files": [
+          "src/**/*"
+        ]
       }
     ],
-    "rules": {     
-      "prettier/prettier": ["error", { "endOfLine": "auto" }]
-     }
+    "rules": {
+      "prettier/prettier": [
+        "error",
+        {
+          "endOfLine": "auto"
+        }
+      ]
+    }
   },
   "browserslist": {
     "production": [
