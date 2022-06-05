@@ -106,7 +106,7 @@ export function transformFileSize(val: number) {
   return `${result.toFixed(2)}${flag}`;
 }
 
-// // 添加index，将值为数组的转换成字符串，用逗号分隔
+// // 添加key，将值为数组的转换成字符串，用逗号分隔
 // // 含size的转换成KB或MB
 const refactorProperties = (obj: any) => {
   const newObj = JSON.parse(JSON.stringify(obj));
@@ -133,17 +133,14 @@ function ModelAnalysisModal(param: {
   if (param.jsonDoc) {
     const obj = inspect(param.jsonDoc);
     if (obj.textures && obj.textures.properties) {
-      // textureData = refactorProperties(obj.textures.properties);
       textureData = obj.textures.properties.map(refactorProperties);
     }
 
     if (obj.materials && obj.materials.properties) {
-      // materialsData = refactorProperties(obj.materials.properties);
       materialsData = obj.materials.properties.map(refactorProperties);
     }
 
     if (obj.meshes && obj.meshes.properties) {
-      // meshesData = refactorProperties(obj.meshes.properties);
       meshesData = obj.meshes.properties.map(refactorProperties);
     }
   }

@@ -16,6 +16,7 @@ import { UploadOutlined } from "@ant-design/icons";
 import { createRef, useEffect, useState } from "react";
 import ModelAnalysisModal from "@/components/ModelAnalysisModal";
 import { parseFilesToDocument } from "@/utils/gltf-transform-utils";
+import ModelScene from "../ModelScene";
 
 function ModelInfoModal(param: {
   type: String;
@@ -25,6 +26,7 @@ function ModelInfoModal(param: {
   console.log("init ModelInfoModal");
   // TODO: type 分为 创建、编辑、查看三种。
   const [analysisVisible, setAnalysisVisible] = useState(false);
+  const [modelSceneFiles, setModelSceneFiles] = useState<File[]>([]);
   const [jsonDoc, setJsonDoc] = useState(null);
 
   const closeFun = () => {
@@ -53,6 +55,7 @@ function ModelInfoModal(param: {
         console.log("parseFilesToDocument:", doc);
         setJsonDoc(doc);
       });
+      setModelSceneFiles(Array.from(files));
     }
 
     // console.log("uploadChange", event, files);
@@ -133,14 +136,21 @@ function ModelInfoModal(param: {
           </Form>
         </Col>
         <Col span={12} className="flex-center">
-          <Card style={{ width: 250, height: 250 }} bodyStyle={{ padding: 0 }}>
+          <Card
+            style={{ width: 250, height: 250 }}
+            bodyStyle={{ padding: 0, width: 250, height: 250 }}
+          >
             {param.type === "create" ? (
-              <Alert
-                showIcon
-                message="上传模型后选择生成缩略图"
-                type="info"
-                style={{ position: "absolute", top: "100px", left: "14px" }}
-              />
+              modelSceneFiles.length > 0 ? (
+                <ModelScene files={modelSceneFiles}></ModelScene>
+              ) : (
+                <Alert
+                  showIcon
+                  message="上传模型后选择生成缩略图"
+                  type="info"
+                  style={{ position: "absolute", top: "100px", left: "14px" }}
+                />
+              )
             ) : (
               <Image width={250} height={250} src="/logo192.png" />
             )}
