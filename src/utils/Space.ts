@@ -6,7 +6,7 @@ import { SpaceEventEnum } from "./constant-enum";
 import { Object3D } from "three";
 
 export default class Space extends EventEmitter {
-  param: any;
+  options: any;
   container: HTMLElement;
   width: number;
   height: number;
@@ -17,7 +17,7 @@ export default class Space extends EventEmitter {
   orbit: OrbitControls | undefined;
   animateFunWrap: () => void;
 
-  constructor(container: HTMLElement, param?: any) {
+  constructor(container: HTMLElement, options?: any) {
     super();
     console.log("init space.", this);
     this.container = container;
@@ -26,9 +26,10 @@ export default class Space extends EventEmitter {
     if (this.height === 0) {
       console.warn("container height is 0.");
     }
-    this.param = param;
+    this.options = options;
 
     this.scene = new THREE.Scene();
+    this.scene.background = new THREE.Color(0x222222);
     this.camera = new THREE.PerspectiveCamera(
       75,
       this.width / this.height,
@@ -83,6 +84,14 @@ export default class Space extends EventEmitter {
     this.orbit.update();
   }
 
+  initGrid() {
+    const size = 10;
+    const divisions = 10;
+
+    const gridHelper = new THREE.GridHelper(size, divisions);
+    this.scene.add(gridHelper);
+  }
+
   animateFun() {
     // 使用前需要 this.animateFunWrap = this.animateFun.bind(this);
     requestAnimationFrame(this.animateFunWrap);
@@ -122,6 +131,10 @@ export default class Space extends EventEmitter {
     });
   }
 
+  toImage() {
+    return this.renderer.domElement.toDataURL("image/jpeg", 0.5);
+  }
+
   frameTargetView(target: Object3D) {
     const camera = this.camera;
     const orbit = this.orbit;
@@ -156,5 +169,9 @@ export default class Space extends EventEmitter {
       box: box,
       center: center,
     };
+  }
+
+  dispose() {
+    console.log("dispose space");
   }
 }

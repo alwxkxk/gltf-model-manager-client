@@ -15,8 +15,13 @@ import TextArea from "antd/lib/input/TextArea";
 import { UploadOutlined } from "@ant-design/icons";
 import { createRef, useEffect, useState } from "react";
 import ModelAnalysisModal from "@/components/ModelAnalysisModal";
-import { parseFilesToDocument } from "@/utils/gltf-transform-utils";
-import ModelScene from "../ModelScene";
+import {
+  gtWriteToSeparateGltf,
+  parseFilesToDocument,
+} from "@/utils/gltf-transform-utils";
+import ModelScene from "@/components/ModelScene";
+import { getSpace, setSpace } from "@/utils/global-variable";
+import { downloadBlobData, zipFiles } from "@/utils/utils";
 
 function ModelInfoModal(param: {
   type: String;
@@ -31,21 +36,48 @@ function ModelInfoModal(param: {
 
   const closeFun = () => {
     param.onClose();
+    setSpace(null);
+  };
+
+  const saveFun = async () => {
+    const space = getSpace();
+    let img: any = null;
+    let fileListObj: any = null;
+
+    if (space) {
+      img = space.toImage();
+      console.log("img", img);
+    }
+    if (jsonDoc) {
+      fileListObj = await gtWriteToSeparateGltf(jsonDoc);
+      console.log("fileListObj", fileListObj);
+    }
+
+    zipFiles(fileListObj).then((zip: Blob) => {
+      downloadBlobData(zip, "model.zip");
+    });
+
+    // TODO: 先压缩，再测试下载到本地，看文件有没有损坏
+    // Object.keys(fileListObj).forEach((key) => {
+    //   downloadBlobData(fileListObj[key], key);
+    // });
+
+    // closeFun();
   };
 
   const analysisModalOnClose = () => {
     setAnalysisVisible(false);
   };
-  const uploadFileBtn: React.Ref<HTMLInputElement> = createRef();
-  const uploadFolderBtn: React.Ref<HTMLInputElement> = createRef();
+  const uploadFileBtnRef: React.Ref<HTMLInputElement> = createRef();
+  const uploadFolderBtnRef: React.Ref<HTMLInputElement> = createRef();
 
   useEffect(() => {
     // 由于在元素上直接声明directory 会提示报错，改由JS动态修改。
-    if (uploadFolderBtn.current !== null) {
-      uploadFolderBtn.current.setAttribute("directory", "");
-      uploadFolderBtn.current.setAttribute("webkitdirectory", "");
+    if (uploadFolderBtnRef.current !== null) {
+      uploadFolderBtnRef.current.setAttribute("directory", "");
+      uploadFolderBtnRef.current.setAttribute("webkitdirectory", "");
     }
-  }, [uploadFolderBtn]);
+  }, [uploadFolderBtnRef]);
 
   const uploadChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const files = event.target.files;
@@ -68,7 +100,7 @@ function ModelInfoModal(param: {
       title="新增模型信息"
       visible={true}
       centered
-      onOk={closeFun}
+      onOk={saveFun}
       onCancel={closeFun}
       width={800}
       maskClosable={false}
@@ -87,7 +119,7 @@ function ModelInfoModal(param: {
                 <Button
                   icon={<UploadOutlined />}
                   onClick={() => {
-                    uploadFileBtn.current?.click();
+                    uploadFileBtnRef.current?.click();
                   }}
                 >
                   文件
@@ -95,7 +127,7 @@ function ModelInfoModal(param: {
                 <Button
                   icon={<UploadOutlined />}
                   onClick={() => {
-                    uploadFolderBtn.current?.click();
+                    uploadFolderBtnRef.current?.click();
                   }}
                 >
                   文件夹
@@ -104,14 +136,14 @@ function ModelInfoModal(param: {
                 <input
                   type="file"
                   accept=".glb,.gltf"
-                  ref={uploadFileBtn}
+                  ref={uploadFileBtnRef}
                   onChange={uploadChange}
                   className="hide"
                 />
 
                 <input
                   type="file"
-                  ref={uploadFolderBtn}
+                  ref={uploadFolderBtnRef}
                   onChange={uploadChange}
                   className="hide"
                 />
@@ -131,7 +163,7 @@ function ModelInfoModal(param: {
             </Form.Item>
 
             <Form.Item label="模型说明" name="note">
-              <TextArea />
+              <TextArea rows={1} />
             </Form.Item>
           </Form>
         </Col>
@@ -146,7 +178,7 @@ function ModelInfoModal(param: {
               ) : (
                 <Alert
                   showIcon
-                  message="上传模型后选择生成缩略图"
+                  message="上传模型后调整保存"
                   type="info"
                   style={{ position: "absolute", top: "100px", left: "14px" }}
                 />
